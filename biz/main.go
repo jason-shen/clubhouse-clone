@@ -2,15 +2,16 @@ package main
 
 import (
 	"context"
-	"entgo.io/ent/entc/integration/ent/migrate"
-	"entgo.io/ent/examples/start/ent"
 	"flag"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jason-shen/clubhouse-clone-biz/config"
+	"github.com/jason-shen/clubhouse-clone-biz/ent"
+	"github.com/jason-shen/clubhouse-clone-biz/ent/migrate"
 	"github.com/jason-shen/clubhouse-clone-biz/middleware"
 	"github.com/jason-shen/clubhouse-clone-biz/routes"
 	"github.com/jason-shen/clubhouse-clone-biz/utils"
+	_ "github.com/lib/pq"
 	"log"
 )
 
