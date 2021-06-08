@@ -8,6 +8,7 @@ import (
 	"github.com/jason-shen/clubhouse-clone-biz/config"
 	"github.com/jason-shen/clubhouse-clone-biz/ent"
 	"github.com/jason-shen/clubhouse-clone-biz/ent/migrate"
+	"github.com/jason-shen/clubhouse-clone-biz/handlers"
 	"github.com/jason-shen/clubhouse-clone-biz/middleware"
 	"github.com/jason-shen/clubhouse-clone-biz/routes"
 	"github.com/jason-shen/clubhouse-clone-biz/utils"
@@ -40,7 +41,9 @@ func main() {
 
 	middleware.SetMiddleware(app)
 
-	routes.SetupApiV1(app)
+	handler := handlers.NewHandlers(client, conf)
+
+	routes.SetupApiV1(app, handler)
 
 	port := "8000"
 
