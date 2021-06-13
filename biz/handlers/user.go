@@ -1,10 +1,21 @@
 package handlers
 
 import (
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jason-shen/clubhouse-clone-biz/ent/user"
 	"net/http"
 )
+
+func (r registerRequest) validate() error {
+	return validation.ValidateStruct(&r,
+		validation.Field(&r.Firstname, validation.Required, validation.Length(3, 20)),
+		validation.Field(&r.Lastname, validation.Required, validation.Length(3, 20)),
+		validation.Field(&r.Email, validation.Required, is.Email),
+		validation.Field(&r.Password, validation.Required, validation.Length(6, 12)),
+	)
+}
 
 func (h *Handler) UserRegister(ctx *fiber.Ctx) error {
 	var request registerRequest
@@ -17,6 +28,14 @@ func (h *Handler) UserRegister(ctx *fiber.Ctx) error {
 		if err != nil {
 			ctx.Status(http.StatusInternalServerError)
 		}
+	}
+
+	if err = request.validate(); err != nil {
+		ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error":   true,
+			"message": err,
+		})
+		return nil
 	}
 
 	exist, _ := h.Client.User.Query().Where(user.Email(request.Email)).Only(ctx.Context())
