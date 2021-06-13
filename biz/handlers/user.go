@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jason-shen/clubhouse-clone-biz/ent/user"
+	"github.com/jason-shen/clubhouse-clone-biz/utils"
 	"net/http"
 )
 
@@ -46,13 +48,19 @@ func (h *Handler) UserRegister(ctx *fiber.Ctx) error {
 		})
 	}
 
+	hashpassword, err := utils.HashPassword(request.Password)
+	if err != nil {
+		fmt.Errorf("failed hash user password:", err)
+		return nil
+	}
+
 	_, err = h.Client.User.Create().
 		SetEmail(request.Email).
 		SetFirstName(request.Firstname).
 		SetLastName(request.Lastname).
 		SetEmail(request.Email).
 		SetAvatar(request.Avatar).
-		SetPassword(request.Password).
+		SetPassword(hashpassword).
 		Save(ctx.Context())
 	if err != nil {
 		ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
